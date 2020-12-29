@@ -1,0 +1,23 @@
+png2npy :
+    convert raw images to numpy arrays for quicker file IO in cnvlstm
+    
+cl_input_1.py :
+    input case file to feed into cnvlstm
+
+cltrain :
+    executable to train a 2D convolutional lstm
+    saves model to a new directory with the same name as the input case name
+
+clinfer : 
+    executable to evaluate a trained 2D convolutional lstm
+    makes series of images
+    saves images to a new directory with the same name as the input case name
+
+convlstm :
+    class for loading data, building a model and training/inference
+
+imageData.py :
+    module to handle data IO
+
+mkmovie : 
+    convert images from cnvlstminfer to movie
