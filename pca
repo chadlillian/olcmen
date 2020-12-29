@@ -1,0 +1,28 @@
+#!/home/chad/anaconda3/bin/python
+
+import sys
+
+import numpy as np
+import sklearn
+from sklearn.decomposition import PCA
+import glob
+import matplotlib.pyplot as plt
+
+files = glob.glob('/home/chad/data/olcmen/cfd/images_*.npy')
+files.sort()
+x = []
+for f in files[15:]:
+    print(f)
+    x.append(np.load(f))
+
+y = np.squeeze(np.concatenate(x))
+y = np.reshape(y,[y.shape[0],-1])
+
+pca = PCA(n_components=10)
+z = pca.fit_transform(y)
+
+#print(pca.explained_variance_ratio_)
+#print(z.shape)
+np.save('zz',z)
+plt.plot(z[:,0])
+plt.show()

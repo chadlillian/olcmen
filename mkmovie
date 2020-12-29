@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# first argument is the name of the directory with the images
+#ffmpeg -i $1/images/frame_%03d.png -vcodec mpeg4 $1/movie.mp4
+#for i in $1/images/frame*[0-9].png;do
+#    #new=${i%.png/_c.png}
+#    #new=${i/%.png/_c.png}
+#    #convert $i -crop 600x120+20+190 $new
+#    #convert $i -crop 50x380+305+50 $new
+#    echo $i $new
+#done
+ffmpeg -i $1/images/frame_%03d.jpg -vcodec mpeg4 $1.mp4
+#ffmpeg -i $1/images/predict_frame_%03d.jpg -vcodec mpeg4 $1_predict.mp4

@@ -1,0 +1,20 @@
+#!/home/chad/anaconda3/envs/tfgpu/bin/python
+###!/home/chadlillian/anaconda3/bin/python
+
+import setproctitle as spt
+import sys,os
+import importlib
+import convlstm
+
+spt.setproctitle(sys.argv[0])
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+modulename = sys.argv[1].split('.')[0] # name of the input deck class file
+inputDeckModule = importlib.import_module(modulename)
+
+deck = inputDeckModule.params()
+ann = convlstm.convlstm(deck)
+ann.loadModels()
+ann.predictModel()
+ann.makeImages(name='predict_frame_')

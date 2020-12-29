@@ -1,0 +1,109 @@
+#!/home/chadlillian/anaconda3/bin/python
+###!/home/chad/anaconda3/envs/tfgpu/bin/python
+
+import setproctitle as spt
+import sys,os,shutil
+spt.setproctitle(sys.argv[0])
+
+import importlib
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras import Sequential, Model
+
+#import memory
+import imageData as iD
+import dataGenerator as dG
+
+############################################################################
+# function to build model, similar to sequential but with the ability to
+#   make multiple outputs
+def seqsimo(layers):
+    hloutputs = []
+    inputs = layers[0]
+    x = inputs
+    for hl in layers[1:-1]:
+        x = hl(x)
+        if 'output' in hl.name:
+            hloutputs.append(x)
+    #outputs.append(layers[-1](x))
+    outputs = layers[-1](x)
+
+    
+    model = Model(inputs=inputs,outputs=outputs)
+    return model,hloutputs
+
+############################################################################
+# READ DATA
+def loadData(deck):
+    imdata = iD.data(deck.dataPath,deck.dataExt,deck.datargb2hsv)
+    imdata.makeSequences(deck.dataTrainSamples,deck.dataNumIn,deck.dataNumOut,validationSet=deck.dataValidSamples)
+    imageSequencesInput, imageSequencesOutput = imdata.getTrainingImages()
+    imageSequencesInputV, imageSequencesOutputV = imdata.getValidationImages()
+    
+    inputSize = imdata.getInputSize()
+    outputSize = imdata.getOutputSize()
+    
+    np.save(deck.caseName+'/valid_in',imageSequencesInputV)
+    np.save(deck.caseName+'/valid_out',imageSequencesOutputV)
+    
+    dataGen = dG.data()
+    dataGen.load(imageSequencesInput,imageSequencesOutput)
+    dataGen.setBatchSize(deck.modelBatchSize)
+    print(imageSequencesInput.shape)
+
+    return dataGen,inputSize,outputSize
+
+############################################################################
+# BUILD MODEL
+def buildModel(deck):
+    csv_logger = tf.keras.callbacks.CSVLogger(deck.caseName+'/training.log')
+    
+    deck.getModel(inputSize,outputSize)
+    
+    model,hloutputs = seqsimo(deck.annLayers)
+    if len(hloutputs)>0:
+        hlon = hloutputs[0].name.split('/')[0]
+        print(hlon)
+    
+    #model = Sequential(deck.annLayers)
+    model.summary()
+    model.compile(optimizer=deck.annOpt, loss=deck.annLoss)
+    
+    print(model.outputs)
+    return model, hloutputs, csv_logger
+
+############################################################################
+# Beginning
+
+############################################################################
+# READ INPUT CLASS and SET UP OUTPUT DIR
+modulename = sys.argv[1].split('.')[0] # name of the input deck class file
+inputDeckModule = importlib.import_module(modulename)
+
+deck = inputDeckModule.params()
+outputDir = deck.caseName
+
+if not os.path.exists(deck.caseName):
+    os.mkdir(deck.caseName)
+shutil.copy(deck.caseName+'.py',deck.caseName+'/'+deck.caseName+'.py')
+
+############################################################################
+# load data into generator, build model
+dataGen,inputSize,outputSize = loadData(deck)
+model, hloutputs, csv_logger = buildModel(deck)
+
+if not deck.run:
+    sys.exit()
+
+############################################################################
+# TRAIN MODEL
+model.fit(x=dataGen,epochs=deck.modelEpochs)#,callbacks=[csv_logger])
+
+############################################################################
+# SAVE MODEL
+model.save(deck.caseName+'/model.h5')
+if len(hloutputs)>0:
+    modelhl = Model(inputs=model.input,outputs= model.get_layer(hlon).output)
+    modelhl.save(deck.caseName+'/modelhl.h5')

@@ -1,0 +1,55 @@
+#!/home/chad/anaconda3/bin/python
+
+import sys
+
+import numpy as np
+import sklearn
+import matplotlib.pyplot as plt
+from skimage.color import rgb2hsv
+import skimage.io as skio
+import glob
+import re
+import sys
+
+# this function rearranges the images into the correct numerical order with or withoug
+#   padding for the integers
+def orderImages(images):
+    images = np.array(images)
+    z = np.array([list(map(int,re.findall(r'[0-9]+',i))) for i in images])
+    zw = np.hstack([np.power(10,np.ceil(np.log10(np.max(z,axis=0))))[1:],[1]])
+    mi = np.argsort([np.int(np.dot(num,zw)) for num in z])
+    images = images[mi] # re-orders the array
+    return images
+
+def splitReadSave(images,numpyPath,numImagesPerSplit,cropping=((0,-1),(0,-1))):
+    t,b = cropping[0]
+    l,r = cropping[1]
+    splits = int(images.shape[0]/numImagesPerSplit)
+    for i in range(splits):
+        #subset = [rgb2hsv(skio.imread(im))[t:b,l:r,0,None] for im in images[i*numImagesPerSplit:(i+1)*numImagesPerSplit]]
+        subset = [skio.imread(im)[t:b,l:r,0,None]/255 for im in images[i*numImagesPerSplit:(i+1)*numImagesPerSplit]]
+        arr = np.stack(subset,axis=0)
+        fi = i*numImagesPerSplit
+        filename = numpyPath+'/images_%05i'%(fi)
+        print(filename)
+        np.save(filename,arr)
+
+# these are for cropping
+vStart = 13     # image vertical start location
+vEnd = 140      # image vertical end location
+hStart = 85     # image horizontal start location
+hEnd = 380      # image horizontal end location
+
+vStart = 36   # image vertical start location
+vEnd = -35     # image vertical end location
+hStart = 145    # image horizontal start location
+hEnd = -70      # image horizontal end location
+
+# location of the images with pattern matching for files
+imagesPath = 'defl_all/*.png'
+imagesPath = '/home/chad/data/olcmen/cfd/images/Temp*.jpeg'
+numpyPath = '/home/chad/data/olcmen/cfd/'
+
+images = orderImages(glob.glob(imagesPath))
+print(images.shape)
+splitReadSave(images,numpyPath,100,((vStart,vEnd),(hStart,hEnd)))

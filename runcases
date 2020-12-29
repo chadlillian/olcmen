@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./cltrain cl_cfd_06.py
+./clinfer cl_cfd_06.py
+
+./cltrain cl_cfd_07.py
+./clinfer cl_cfd_07.py
