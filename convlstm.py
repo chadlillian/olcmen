@@ -125,23 +125,24 @@ class convlstm:
         np.save(outputDir+'/valid_out_hat.npy',yh)
         return yh
 
-    def predictModel(self):
-        outputDir = self.deck.caseName
-        x = np.load(outputDir+'/valid_in.npy')
-        nfi = x.shape[1]
-        y = np.load(outputDir+'/valid_out.npy')
-        xyh = np.zeros(x.shape)
-        xyh[0] = x[0].copy()
-
-        for i in range(xyh.shape[0]-1):
-            xi = xyh[None,i]
-            yh = self.models['model'].predict(xi)
-
-            xyh[i+1,:-1] = xi[0,1:].copy()
-            xyh[i+1,-1] = yh[0,0].copy()
-
-        self.yh = xyh[:,-1]
-        self.y = y
+#   Deprecated, I think
+#    def predictModel(self):
+#        outputDir = self.deck.caseName
+#        x = np.load(outputDir+'/valid_in.npy')
+#        nfi = x.shape[1]
+#        y = np.load(outputDir+'/valid_out.npy')
+#        xyh = np.zeros(x.shape)
+#        xyh[0] = x[0].copy()
+#
+#        for i in range(xyh.shape[0]-1):
+#            xi = xyh[None,i]
+#            yh = self.models['model'].predict(xi)
+#
+#            xyh[i+1,:-1] = xi[0,1:].copy()
+#            xyh[i+1,-1] = yh[0,0].copy()
+#
+#        self.yh = xyh[:,-1]
+#        self.y = y
 
     def evalModels(self):
         for modelname in self.models.keys():
