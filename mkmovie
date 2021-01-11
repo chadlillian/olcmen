@@ -9,5 +9,7 @@
 #    #convert $i -crop 50x380+305+50 $new
 #    echo $i $new
 #done
-ffmpeg -i $1/images/frame_%03d.jpg -vcodec mpeg4 $1.mp4
+ffmpeg -framerate 6 -i $1/images/frame_%03d.jpg -c:v libx264 -vcodec mpeg4 $1.mp4
+#ffmpeg -i $1/images/frame_%03d.jpg -vcodec mpeg4 $1.mp4
+
 #ffmpeg -i $1/images/predict_frame_%03d.jpg -vcodec mpeg4 $1_predict.mp4

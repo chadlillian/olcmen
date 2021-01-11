@@ -111,7 +111,9 @@ class data:
         #   we will get a new sequence that looks like : [[Im_0, Im_1, Im_2],[Im_1, Im_2, Im_3], ...]
         #   where each of the Im_* is a [H,W,C] matrix
         zz = [immat[i:numSamples-frameLenIn-frameLenOut+1+i] for i in range(frameLenIn+frameLenOut)]
+        print('len zz = ',len(zz), 'zz0.shape = ',zz[0].shape)
         zz = np.stack(zz,axis=1)
+        print('zz.shape = ',zz.shape)
         self.imageSequencesInputTrain = zz[:-validationSet,:frameLenIn]
         self.imageSequencesOutputTrain = zz[:-validationSet,frameLenIn:]
 
@@ -150,7 +152,9 @@ class data:
         #   we will get a new sequence that looks like : [[Im_0, Im_1, Im_2],[Im_1, Im_2, Im_3], ...]
         #   where each of the Im_* is a [H,W,C] matrix
         zz = [immat[i:numSamples-frameLenIn-frameLenOut+1+i] for i in range(frameLenIn+frameLenOut)]
+        print('len zz = ',len(zz), 'zz0.shape = ',zz[0].shape)
         zz = np.stack(zz,axis=1)
+        print('zz.shape = ',zz.shape)
         self.imageSequencesInputTrain = zz[:-validationSet,:-1]
         self.imageSequencesOutputTrain = zz[:-validationSet,1:]
 

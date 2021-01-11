@@ -1,5 +1,7 @@
 #!/home/chad/anaconda3/bin/python
 
+#################################
+# This converts a set of individual image files into a set of numpy arrays
 import sys
 
 import numpy as np
@@ -11,8 +13,8 @@ import glob
 import re
 import sys
 
-# this function rearranges the images into the correct numerical order with or withoug
-#   padding for the integers
+# this function rearranges the images into the correct numerical order based on their file name
+#   with or withoug padding for the integers
 def orderImages(images):
     images = np.array(images)
     z = np.array([list(map(int,re.findall(r'[0-9]+',i))) for i in images])
@@ -21,16 +23,17 @@ def orderImages(images):
     images = images[mi] # re-orders the array
     return images
 
+# Read the images and save as numpy arrays
 def splitReadSave(images,numpyPath,numImagesPerSplit,cropping=((0,-1),(0,-1))):
     t,b = cropping[0]
     l,r = cropping[1]
     splits = int(images.shape[0]/numImagesPerSplit)
     for i in range(splits):
-        #subset = [rgb2hsv(skio.imread(im))[t:b,l:r,0,None] for im in images[i*numImagesPerSplit:(i+1)*numImagesPerSplit]]
-        subset = [skio.imread(im)[t:b,l:r,0,None]/255 for im in images[i*numImagesPerSplit:(i+1)*numImagesPerSplit]]
-        arr = np.stack(subset,axis=0)
-        fi = i*numImagesPerSplit
-        filename = numpyPath+'/images_%05i'%(fi)
+        fi = i*numImagesPerSplit # starting image number
+        fi1 = (i+1)*numImagesPerSplit # starting image number
+        subset = [skio.imread(im)[t:b,l:r,0,None]/255 for im in images[fi:fi1]] # read in a set of 'numIMagesPerSplit'
+        arr = np.stack(subset,axis=0) # convert to numpy
+        filename = numpyPath+'/images_%05i'%(fi) # make filename string with full path
         print(filename)
         np.save(filename,arr)
 
@@ -48,8 +51,11 @@ hEnd = -70      # image horizontal end location
 # location of the images with pattern matching for files
 imagesPath = 'defl_all/*.png'
 imagesPath = '/home/chad/data/olcmen/cfd/images/Temp*.jpeg'
+
+# location of the resultant numpy array
 numpyPath = '/home/chad/data/olcmen/cfd/'
 
+# Begin
 images = orderImages(glob.glob(imagesPath))
 print(images.shape)
 splitReadSave(images,numpyPath,100,((vStart,vEnd),(hStart,hEnd)))

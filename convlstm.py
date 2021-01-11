@@ -47,12 +47,14 @@ class convlstm:
 
         pt = self.deck.predictType
         if pt['type']=='center':
-            imdata.makeInteriorSequences(self.deck.dataTrainSamples,pt['input_skip'],pt['input_len'],validationSet=self.deck.dataValidSamples)
+            imdata.makeInteriorSequences(pt['numSequences'],pt['input_skip'],pt['input_len'],validationSet=pt['numValidation'])
         elif pt['type']=='next':
-            imdata.makeSequences(self.deck.dataTrainSamples,pt['frameLenIn'],pt['frameLenOut'],validationSet=self.deck.dataValidSamples)
+            imdata.makeSequences(pt['numSequences'],pt['frameLenIn'],pt['frameLenOut'],validationSet=pt['numValidation'])
         elif pt['type']=='offset':
-            imdata.makeOffsetSequences(self.deck.dataTrainSamples,pt['frameLenIn'],validationSet=self.deck.dataValidSamples)
+            imdata.makeOffsetSequences(pt['numSequences'],pt['frameLenIn'],validationSet=pt['numValidation'])
 
+        print('done loading data')
+        print('+'*88)
         imageSequencesInput, imageSequencesOutput = imdata.getTrainingImages()
         imageSequencesInputV, imageSequencesOutputV = imdata.getValidationImages()
         
@@ -106,7 +108,6 @@ class convlstm:
 
         self.y = y
         self.yh = yh
-
 
     def _evalModel(self,modelname):
         outputDir = self.deck.caseName
