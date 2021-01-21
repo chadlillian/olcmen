@@ -2,17 +2,23 @@
 ###!/home/chadlillian/anaconda3/bin/python
 
 import setproctitle as spt
+spt.setproctitle(sys.argv[0])
+
 import sys,os
 import importlib
 import convlstm
 
-spt.setproctitle(sys.argv[0])
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-modulename = sys.argv[1].split('.')[0] # name of the input deck class file
-inputDeckModule = importlib.import_module(modulename)
+# import the input deck.  The input deck is actually a python module.
+#   This is done to make layer construction full functional
+#   And to eliminate the need for writing a parser
+path = sys.argv[1]
+modulename = os.path.split(path)[1].split('.')[0]
+loader = importlib.machinery.SourceFileLoader(modulename, path)
+inputDeckModule = loader.load_module()
 
+# Evaluate the ANN at the validation points
 deck = inputDeckModule.params()
 ann = convlstm.convlstm(deck)
 ann.loadModels()

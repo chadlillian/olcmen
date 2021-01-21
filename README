@@ -1,3 +1,10 @@
+required libraries:
+    anaconda python has everything except 2 modules
+    tensorflow 2.0, GPU preferred
+    setproctitle; not necessary, can comment out those lines of code.
+        sets the name of the process so its easily identified with ps
+        or nvidia-smi
+
 png2npy :
     convert raw images to numpy arrays for quicker file IO in cnvlstm
     

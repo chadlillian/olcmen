@@ -31,8 +31,8 @@ class params:
         self.customLossFunction = mimse
         self.customLossFunction = ssimloss
         self.customLossFunction = lastloss
-        self.run = False
         self.run = True
+        self.run = False
 
         self.training()
 

@@ -8,10 +8,11 @@ from sklearn.decomposition import PCA
 import glob
 import matplotlib.pyplot as plt
 
-files = glob.glob('/home/chad/data/olcmen/cfd/images_*.npy')
+files = glob.glob('/home/chad/data/olcmen/cfd/cavityonly/images_*.npy')
 files.sort()
 x = []
-for f in files[15:]:
+N = 0
+for f in files[N:]:
     print(f)
     x.append(np.load(f))
 
@@ -25,4 +26,8 @@ z = pca.fit_transform(y)
 #print(z.shape)
 np.save('zz',z)
 plt.plot(z[:,0])
+plt.plot(z[:,1])
+plt.plot(z[:,2])
+plt.show()
+plt.plot(z[:,0],z[:,1])
 plt.show()

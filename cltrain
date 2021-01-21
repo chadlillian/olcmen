@@ -1,18 +1,26 @@
 #!/home/chad/anaconda3/envs/tfgpu/bin/python
 ###!/home/chadlillian/anaconda3/bin/python
 
+# comment out these two lines of code if setproctitle unavailable
+#   This makes it easy to find the proc using ps
 import setproctitle as spt
-import sys,os
-import importlib
-import convlstm
-
 spt.setproctitle(sys.argv[0])
+
+import sys,os
+import importlib.machinery
+import convlstm
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-modulename = sys.argv[1].split('.')[0] # name of the input deck class file
-inputDeckModule = importlib.import_module(modulename)
+# import the input deck.  The input deck is actually a python module.
+#   This is done to make layer construction full functional
+#   And to eliminate the need for writing a parser
+path = sys.argv[1]
+modulename = os.path.split(path)[1].split('.')[0]
+loader = importlib.machinery.SourceFileLoader(modulename, path)
+inputDeckModule = loader.load_module()
 
+# Train the ANN, unless deck.run==False
 deck = inputDeckModule.params()
 ann = convlstm.convlstm(deck)
 ann.buildModels()

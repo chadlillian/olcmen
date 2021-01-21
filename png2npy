@@ -48,12 +48,17 @@ vEnd = -35     # image vertical end location
 hStart = 145    # image horizontal start location
 hEnd = -70      # image horizontal end location
 
+vStart = 436   # image vertical start location
+vEnd = 480     # image vertical end location
+hStart = 915    # image horizontal start location
+hEnd = 1160      # image horizontal end location
+
 # location of the images with pattern matching for files
 imagesPath = 'defl_all/*.png'
 imagesPath = '/home/chad/data/olcmen/cfd/images/Temp*.jpeg'
 
 # location of the resultant numpy array
-numpyPath = '/home/chad/data/olcmen/cfd/'
+numpyPath = '/home/chad/data/olcmen/cfd/cavityonly/'
 
 # Begin
 images = orderImages(glob.glob(imagesPath))
