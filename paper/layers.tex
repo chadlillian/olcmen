@@ -1,0 +1,34 @@
+\pgfdeclarelayer{bottom}
+%\pgfdeclarelayer{top}
+\pgfsetlayers{bottom,main}
+%\pgfsetlayers{bottom,main,top}   
+\begin{tikzpicture}[scale=.9,every node/.style={minimum size=1cm},on grid]       
+\begin{pgfonlayer}{bottom}
+    \begin{scope}[  % Lower layer
+        yshift=0,every node/.append style={
+            yslant=0.5,xslant=-1,rotate=-10},yslant=0.5,xslant=-1,rotate=-10
+          ]
+        \fill[white,fill opacity=0.9] (0,0) rectangle (5,5);
+        \draw[step=10mm, gray!70] (2,2) grid (5,5);
+        \draw[step=3.33mm, green] (2,2) grid (3,3);
+        \draw[gray,very thick] (2,2) rectangle (5,5);
+        \draw[black,dashed] (0,0) rectangle (5,5);
+        \node[name=B,draw,scale=0.9,green,very thick,text width=0.95,text height=0.95,inner sep=0pt,] at (2.525,2.525) {};
+    \end{scope}
+\end{pgfonlayer}
+
+    \begin{scope}[  % Upper layer
+        yshift=105,every node/.append style={
+        yslant=0.5,xslant=-1,rotate=-10},yslant=0.5,xslant=-1,rotate=-10
+                     ]
+        \fill[white,fill opacity=.6] (0,0) rectangle (5,5);
+        \draw[step=10mm, green] (1,1) grid (4,4);
+        \node[scale=.9,draw,green,very thick,name=A,text width=3cm,text height=3cm,inner sep=0pt] at (2.5,2.5) {};
+        \draw[black,dashed] (0,0) rectangle (5,5);
+        \begin{pgfonlayer}{bottom}
+        \foreach \i in {north east,north west,south west,south east}
+          \draw (A.\i) -- (B.\i);
+        \end{pgfonlayer}
+    \end{scope}
+
+\end{tikzpicture}
